@@ -50,7 +50,7 @@ def scrape_all_recipes_links():
     
 def scrape_all_recipes_by_course():
     """
-    Scrape all recipe
+    Scrape all recipe by courses from the MyPlate Kitchen website.
     """
     courses = {
         "Appertizers": "3A116",
@@ -70,11 +70,29 @@ def scrape_all_recipes_by_course():
         URL = f"{BASE_URL}/myplate-kitchen/recipes?f[0]=course%{course_id}&page="
         all_recipe_links = get_recipe_links(URL)
         # Save all recipe links to a text file
-        save_recipe_links_to_file(all_recipe_links, f"data/myplate_recipe_links_{course}.txt")
+        save_recipe_links_to_file(all_recipe_links, f"data/courses/myplate_recipe_links_{course}.txt")
+        
+def scrape_all_recipes_by_food_groups():
+    os.makedirs("data/food_groups", exist_ok=True)
+    food_groups = {
+        "Fruits": "3A88",
+        "Vegetables": "3A91",
+        "Grains": "3A97",
+        "Protein Foods": "3A100",
+        "Dairy": "3A108",
+    }
+    
+    for food_group, food_group_id in food_groups.items():
+        URL = f"{BASE_URL}/myplate-kitchen/recipes?f[0]=food_groups%{food_group_id}&page="
+        all_recipe_links = get_recipe_links(URL)
+        # Save all recipe links to a text file
+        save_recipe_links_to_file(all_recipe_links, f"data/food_groups/myplate_recipe_links_{food_group}.txt")
+
 
 # =================== SCRAPE RECIPES LINKS ===================
 scrape_all_recipes_links()
 scrape_all_recipes_by_course()
+scrape_all_recipes_by_food_groups()
 ## =================== SCRAPE RECIPES DETAILS ===================
 
 # Ensure the directory exists for saving individual JSON files
