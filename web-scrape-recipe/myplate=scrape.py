@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
+import os
+import json
 
 BASE_URL = "https://www.myplate.gov"
 all_recipe_links = []
@@ -28,6 +30,8 @@ with open("data/myplate_recipe_links.txt", "w") as f:
     for link in all_recipe_links:
         f.write(link + "\n")
 
+# Ensure the directory exists for saving individual JSON files
+os.makedirs("data/individual_recipes", exist_ok=True)
 
 ## Scrape recipe details
 # Load recipe links from text file
@@ -43,10 +47,10 @@ for recipe_link in all_recipe_links:
     recipe_article = soup.find("article", class_="mp-recipe-full__article")
 
     # ======== TITLE, SERVINGS, DESCRIPTION, IMAGE ========
-    title = recipe_article.find("h1", class_="mp-recipe-full__title").get_text()
+    title = recipe_article.find("h1", class_="mp-recipe-full__title").get_text().replace("\n", "")
     servings = recipe_article.find("div", class_= "mp-recipe-full__overview").find_all("span", class_="mp-recipe-full__detail--data")[0].get_text().strip().split()[0]
     description = recipe_article.find("div", class_="mp-recipe-full__description").get_text().strip()
-    image_url = recipe_article.find("img")["src"]
+    image_url = recipe_article.find("img", class_="image-style-recipe-525-x-350-")["src"]
 
     # ======== INGREDIENTS ========
     full_details = recipe_article.find("div", class_="mp-recipe-full__details") # include ingredients and instructions
@@ -95,7 +99,7 @@ for recipe_link in all_recipe_links:
         # Close the browser
         driver.quit()
     
-    recipe = {
+    recipe_data = {
         "title": title,
         "image_url": image_url,
         "servings": servings,
@@ -104,11 +108,14 @@ for recipe_link in all_recipe_links:
         "instructions": instructions,
         "nutrition_info": nutrition_info
     }
-    recipes.append(recipe)
+    
+    # Create a safe filename based on the title (e.g., replace spaces with underscores)
+    file_name = f"data/individual_recipes/{title.replace(' ', '_').replace('/', '_')}.json"
+    
+    # Write the recipe data to a JSON file
+    with open(file_name, "w") as f:
+        json.dump(recipe_data, f, indent=2)
 
-# Save recipes to a JSON file
-import json
-with open("data/myplate_recipes.json", "w") as f:
-    json.dump(recipes, f, indent=2)
+    print(f"Recipe '{title}' saved as {file_name}")
     
 print(f"Total number of recipes scraped: {len(recipes)}")
