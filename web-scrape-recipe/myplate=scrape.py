@@ -59,7 +59,7 @@ for recipe_link in all_recipe_links:
     ingredients = []
     for ingredient in ingredients_html:
         ingredients_info = ingredient.get_text().strip().split("\n")
-        ingredients = [" ".join(item.strip() for item in ingredients_info if item.strip())]
+        ingredients.append(" ".join(item.strip() for item in ingredients_info if item.strip()))
 
     # ======== INSTRUCTIONS ========
     instructions_html = full_details.find("div", class_="field--name-field-instructions").find_all("li")
