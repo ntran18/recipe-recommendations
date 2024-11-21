@@ -88,11 +88,31 @@ def scrape_all_recipes_by_food_groups():
         # Save all recipe links to a text file
         save_recipe_links_to_file(all_recipe_links, f"data/food_groups/myplate_recipe_links_{food_group}.txt")
 
+def scrape_all_recipes_by_cuisines():
+    os.makedirs("data/cuisines", exist_ok=True)
+    cuisines = {
+        "American": "3A132",
+        "American_Indian&Alaska_Native": "3A137",
+        "Asian&Pacific_Islander": "3A133",
+        "Carribean_(Haitian,_Jamaican)": "3A1193",
+        "Latin_American&Hispanic": "3A134",
+        "Mediterranean": "3A135",
+        "Middle_Eastern": "3A136",
+        "Southern": "3A138",
+        "Vegetarian": "3A139",
+    }
+    
+    for cuisine, cuisine_id in cuisines.items():
+        URL = f"{BASE_URL}/myplate-kitchen/recipes?f[0]=cuisine%{cuisine_id}&page="
+        all_recipe_links = get_recipe_links(URL)
+        # Save all recipe links to a text file
+        save_recipe_links_to_file(all_recipe_links, f"data/cuisines/myplate_recipe_links_{cuisine}.txt")
 
 # =================== SCRAPE RECIPES LINKS ===================
 scrape_all_recipes_links()
 scrape_all_recipes_by_course()
 scrape_all_recipes_by_food_groups()
+scrape_all_recipes_by_cuisines()
 ## =================== SCRAPE RECIPES DETAILS ===================
 
 # Ensure the directory exists for saving individual JSON files
