@@ -9,26 +9,73 @@ import json
 BASE_URL = "https://www.myplate.gov"
 all_recipe_links = []
 
-# There are 11 pages of recipes from MyPlate Kitchen with 100 recipes per page
-for page_number in range(0, 11):
-    URL = f"{BASE_URL}/myplate-kitchen/recipes?sort_bef_combine=title_ASC&items_per_page=100&page={page_number}"
-    page = requests.get(URL)
-    print(f"Fetching page {page_number}: {URL}")
-
-    soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(class_="view-content")
-
-    recipe_cards = results.find_all("div", class_="mp-recipe-teaser__title")
-
-    recipe_links = [BASE_URL + recipe_card.find("a")["href"] for recipe_card in recipe_cards]
-    all_recipe_links.extend(recipe_links)
+def save_recipe_links_to_file(recipe_links, file_name):
+    """Save a list of recipe links to a text file."""
+    with open(file_name, "w") as f:
+        for link in recipe_links:
+            f.write(link + "\n")
+            
+def get_recipe_links(URL):
+    """Get all recipe links from a given URL."""
     
-print(f"Total number of recipes: {len(all_recipe_links)}")
+    all_recipe_links = []
+    page_number = 0
+    
+    while True:
+        page = requests.get(URL + str(page_number))
+        print(f"Fetching page {page_number}: {URL}")
 
-# Save all recipe links to a text file
-with open("data/myplate_recipe_links.txt", "w") as f:
-    for link in all_recipe_links:
-        f.write(link + "\n")
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find(class_="view-content")
+
+        if results is None:
+            break
+        recipe_cards = results.find_all("div", class_="mp-recipe-teaser__title")
+
+        recipe_links = [BASE_URL + recipe_card.find("a")["href"] for recipe_card in recipe_cards]
+        all_recipe_links.extend(recipe_links)
+        page_number += 1
+    print(f"Total number of recipes: {len(all_recipe_links)}")
+    return all_recipe_links
+
+def scrape_all_recipes_links():
+    """
+    Scrape all recipe links from the MyPlate Kitchen website.
+    """
+    print("Scraping all recipe links...")
+    URL = f"{BASE_URL}/myplate-kitchen/recipes?sort_bef_combine=title_ASC&items_per_page=100&page="
+    all_recipe_links = get_recipe_links(URL)
+    # Save all recipe links to a text file
+    save_recipe_links_to_file(all_recipe_links, "data/myplate_recipe_links.txt")
+    
+def scrape_all_recipes_by_course():
+    """
+    Scrape all recipe
+    """
+    courses = {
+        "Appertizers": "3A116",
+        "Beverages": "3A117",
+        "Breads": "3A118",
+        "Breakfast": "3A119",
+        "Desserts": "3A120",
+        "Main Dishes": "3A121",
+        "Salads": "3A122",
+        "Sabdwiches": "3A123",
+        "Sauces, Condiments and Seasonings": "3A124",
+        "Side Dishes": "3A125",
+        "Snacks": "3A126",
+        "Soups and Stews": "3A127"
+    }
+    for course, course_id in courses.items():
+        URL = f"{BASE_URL}/myplate-kitchen/recipes?f[0]=course%{course_id}&page="
+        all_recipe_links = get_recipe_links(URL)
+        # Save all recipe links to a text file
+        save_recipe_links_to_file(all_recipe_links, f"data/myplate_recipe_links_{course}.txt")
+
+# =================== SCRAPE RECIPES LINKS ===================
+scrape_all_recipes_links()
+scrape_all_recipes_by_course()
+## =================== SCRAPE RECIPES DETAILS ===================
 
 # Ensure the directory exists for saving individual JSON files
 os.makedirs("data/individual_recipes", exist_ok=True)
