@@ -12,8 +12,8 @@ gluten_products = read_ingredients("data/gluten.txt")
 nuts = read_ingredients("data/nut.txt")
 
 # General function to check if any ingredient from the list appears in the recipe ingredients
-def contains_ingredient(ingredients, ingredient_list):
-    return any(ingredient in ingredients for ingredient in ingredient_list)
+def contains_ingredient(ingredients, abandon_ingredients):
+    return any( abandon_ingredient in ingredient for abandon_ingredient in abandon_ingredients for ingredient in ingredients)
 
 # Check functions
 def is_gluten_free(ingredients):
