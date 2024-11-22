@@ -1,0 +1,170 @@
+Aardvark
+Abalone
+African Buffalo
+Ahi Tuna
+Albacore
+Alligator
+Alpaca
+Ant
+Antelope
+Bass
+Bear
+Bee
+Bee Larva
+Beef
+Beetle
+Beluga Caviar
+Bird Egg
+Bison
+Brain
+Buffalo
+Bugs
+Carp
+Cat Meat
+Caterpillar
+Catfish
+Caviar
+Chicken
+Clam
+Coconut Grub
+Crab
+Crab Roe
+Crickets
+Crocodile
+Cod
+Deer
+Dog
+Donkey
+Duck
+Eel
+Egg
+Elk
+Emu
+Emu Egg
+Escamole
+Ant Larvae
+Escargot
+Fish
+Flounder
+Frog
+Frog Egg
+Gnu
+Goose
+Goose Egg
+Gopher
+Grasshopper
+Grouper
+Guanaco
+Guinea Fowl
+Hare
+Heart
+Herring
+Horse
+Ibex
+Iguana
+Jellyfish
+Kangaroo
+Kidney
+Lamb
+Leech
+Liver
+Lizard
+Llama Meat
+Lobster
+Lobster Roe
+Merling
+Mouse
+Mullet
+Mullet Roe
+Musk Ox
+Mussels
+Mutton
+Octopus
+Opossum
+Ostrich
+Oxen
+Oyster
+Partridge
+Pigeon
+Pork
+Prawn
+Ptarmigan
+Python
+Quail
+Rabbit
+Raccoon
+Rat Meat
+Rattlesnake
+Rhea
+Roe
+Sago Grub
+Sago Palm Weevil Larvae
+Salmon
+Scallop
+Scorpion
+Seal Meat
+Sea Bass
+Sea Cucumber
+Sea Lion
+Sea Trout
+Sea Urchin
+Shark
+Shrimp
+Smelt
+Smelt Cavier
+Snail
+Snake
+Spider
+Squid
+Squirrel
+Swan
+Swan Egg
+Swordfish
+Tarantula
+Tilapia
+Toad
+Trout
+Tuna
+Turkey
+Turtle
+Urchin
+Urchin Roe
+Venison
+Viper
+Walrus
+Wasps
+Whale Meat
+Whitefish
+Whitefish Roe
+Whiting
+Worms
+Wtchetty Grub
+Xia Shrimp
+Yak
+Yellow Jacket
+Yellowfin Tuna
+Zaza-Mushi
+Stonefly Larvae
+Zebra
+Fat
+Skin
+Flesh
+Blood
+Whey
+Gelatin
+Bone
+Liver
+Pancreas
+Gland
+Tendon
+Ligament
+Tallow
+Collagen
+Heart
+Organ
+Lung
+Kidney
+Liver
+Hide
+honey
+civet oil

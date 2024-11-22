@@ -121,10 +121,10 @@ def scrape_all_recipes_by_cuisines():
     scrape_all_recipes_by_category("cuisine", cuisines, "cuisines")
 
 # =================== SCRAPE RECIPES LINKS ===================
-scrape_all_recipes_links()
-scrape_all_recipes_by_course()
-scrape_all_recipes_by_food_groups()
-scrape_all_recipes_by_cuisines()
+# scrape_all_recipes_links()
+# scrape_all_recipes_by_course()
+# scrape_all_recipes_by_food_groups()
+# scrape_all_recipes_by_cuisines()
 # =================== SCRAPE RECIPES DETAILS ===================
 
 # Ensure the directory exists for saving individual JSON files
@@ -188,7 +188,7 @@ for recipe_link in all_recipe_links:
         # Locate the expanded nutrition table
         nutrition_rows = driver.find_elements(By.CSS_SELECTOR, ".panel.panel-expanded tbody tr")
         
-        nutrition_info = []
+        nutrition_info = {}
         for row in nutrition_rows:
             cells = row.find_elements(By.TAG_NAME, "td")
             
@@ -196,7 +196,7 @@ for recipe_link in all_recipe_links:
                 nutrient_name = cells[0].text.strip()
                 nutrient_value = cells[1].text.strip()
                 if nutrient_name and nutrient_value:
-                    nutrition_info.append(f"{nutrient_name}: {nutrient_value}")
+                    nutrition_info[nutrient_name] = nutrient_value
 
     finally:
         # Close the browser
@@ -213,6 +213,18 @@ for recipe_link in all_recipe_links:
                 else:
                     recipe_categories[category] = [key]
     
+    # ======== DIETS ========
+    
+    # Check if the recipe is gluten-free
+    diets_dict = {}
+    diets_dict["gluten_free"] = is_gluten_free(ingredients)
+    diets_dict["vegetarian"] = is_vegetarian(ingredients)
+    diets_dict["vegan"] = is_vegan(ingredients)
+    diets_dict["lacto_vegetarian"] = is_lacto_vegetarian(ingredients)
+    diets_dict["ovo_vegetarian"] = is_ovo_vegetarian(ingredients)
+    diets_dict["ketogenic"] = is_keto(nutrition_info)
+    
+    diets = [diet for diet, is_diet in diets_dict.items() if is_diet]
     # ======== SAVE RECIPE DATA TO JSON FILE ========
     recipe_data = {
         "title": title,
@@ -225,6 +237,7 @@ for recipe_link in all_recipe_links:
         "courses": recipe_categories.get("courses", []),
         "food_groups": recipe_categories.get("food_groups", []),
         "cuisines": recipe_categories.get("cuisines", []),
+        "diets": diets
     }
     
     # Create a safe filename based on the title (e.g., replace spaces with underscores)
