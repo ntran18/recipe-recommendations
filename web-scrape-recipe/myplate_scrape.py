@@ -128,12 +128,14 @@ def scrape_all_recipes_by_cuisines():
 # =================== SCRAPE RECIPES DETAILS ===================
 
 # Ensure the directory exists for saving individual JSON files
-os.makedirs("data/individual_recipes", exist_ok=True)
-
+os.makedirs("data/meet_requirements_recipes", exist_ok=True)
+os.makedirs("data/other_recipes", exist_ok=True)
 ## Scrape recipe details
 # Load recipe links from text file
 with open("data/myplate_recipe_links.txt", "r") as f:
     all_recipe_links = f.read().splitlines()
+
+all_recipe_links = all_recipe_links[99:]
 
 recipes_by_categories = {}
 for category in ["courses", "food_groups", "cuisines"]:
@@ -141,10 +143,11 @@ for category in ["courses", "food_groups", "cuisines"]:
     for file_name in os.listdir(f"data/{category}"):
         with open(f"data/{category}/{file_name}", "r") as f:
             recipes_by_categories[category][file_name.replace(".txt", "")] = set(f.read().splitlines())
+            
 
 # Scrape recipe details
 for recipe_link in all_recipe_links:
-    page = requests.get(recipe_link)
+    page = requests.get(recipe_link, timeout=10)
     soup = BeautifulSoup(page.content, "html.parser")
 
     recipe_article = soup.find("article", class_="mp-recipe-full__article")
@@ -201,7 +204,10 @@ for recipe_link in all_recipe_links:
     finally:
         # Close the browser
         driver.quit()
-        
+
+    if nutrition_info == {}:
+        print(f"Could not scrape nutrition info for {title}. Skipping...")
+        continue
     # ======== CATEGORIES ========
     recipe_categories = {}
     
@@ -220,14 +226,16 @@ for recipe_link in all_recipe_links:
     diets_dict["gluten_free"] = is_gluten_free(ingredients)
     diets_dict["vegetarian"] = is_vegetarian(ingredients)
     diets_dict["vegan"] = is_vegan(ingredients)
-    diets_dict["lacto_vegetarian"] = is_lacto_vegetarian(ingredients)
-    diets_dict["ovo_vegetarian"] = is_ovo_vegetarian(ingredients)
-    diets_dict["ketogenic"] = is_keto(nutrition_info)
+    diets_dict["pescetarian"] = is_pescetarian(ingredients)
+    diets_dict["dairy_free"] = is_dairy_free(ingredients)
+    diets_dict["seafood_free"] = is_seafood_free(ingredients)
+    diets_dict["nut_free"] = is_nut_free(ingredients)
     
     diets = [diet for diet, is_diet in diets_dict.items() if is_diet]
     # ======== SAVE RECIPE DATA TO JSON FILE ========
     recipe_data = {
         "title": title,
+        "recipe_url": recipe_link,
         "image_url": image_url,
         "servings": servings,
         "description": description,
@@ -240,9 +248,12 @@ for recipe_link in all_recipe_links:
         "diets": diets
     }
     
-    # Create a safe filename based on the title (e.g., replace spaces with underscores)
-    file_name = f"data/individual_recipes/{title.replace(' ', '_').replace('/', '_')}.json"
-    
+    # at least 5 gram of fiber and at most 5 g of saturated fat
+    if int(nutrition_info["Dietary Fiber"].split(" ")[0]) < 5 or int(nutrition_info["Saturated Fat"].split(" ")[0]) > 5:
+        file_name = f"data/other_recipes/{title.replace(' ', '_').replace('/', '_')}.json"
+    else :
+        file_name = f"data/meet_requirements_recipes/{title.replace(' ', '_').replace('/', '_')}.json"
+
     # Write the recipe data to a JSON file
     with open(file_name, "w") as f:
         json.dump(recipe_data, f, indent=2)

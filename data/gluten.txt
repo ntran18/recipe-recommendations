@@ -47,3 +47,4 @@ Triticum spelta
 triticum vulgare
 udon
 malt
+wheat

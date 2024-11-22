@@ -1,100 +1,41 @@
+# Utility function to read and return the contents of a file as a list
+def read_ingredients(file_path):
+    with open(file_path, "r") as f:
+        return [ingredient.strip().lower() for ingredient in f.read().splitlines()]
 
-with open("data/meats.txt", "r") as f:
-    meats = f.read().splitlines()
-    
-with open("data/egg.txt", "r") as f:
-    egg_products = f.read().splitlines()
+# Load all ingredients from their respective files
+seafood = read_ingredients("data/seafoods.txt")
+red_meat = read_ingredients("data/red_meats.txt")
+egg_products = read_ingredients("data/egg.txt")
+dairy_products = read_ingredients("data/dairy.txt")
+gluten_products = read_ingredients("data/gluten.txt")
+nuts = read_ingredients("data/nut.txt")
 
-with open("data/dairy.txt", "r") as f:
-    dairy_products = f.read().splitlines()
-    
-with open("data/gluten.txt", "r") as f:
-    gluten_products = f.read().splitlines()
+# General function to check if any ingredient from the list appears in the recipe ingredients
+def contains_ingredient(ingredients, ingredient_list):
+    return any(ingredient in ingredients for ingredient in ingredient_list)
 
-def is_gluten_free(ingredients) -> bool:
-    for ingredient in ingredients:
-        for gluten_ingredient in gluten_products:
-            if gluten_ingredient.lower() in ingredient.lower():
-                return False
-    return True
+# Check functions
+def is_gluten_free(ingredients):
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], gluten_products)
 
-def is_vegetarian(ingredients) -> bool:
-    """ No ingredients may contain meat or meat by-products, such as bones or gelatin. """
-    for ingredient in ingredients:
-        for non_vegetarian_ingredient in meats:
-            if non_vegetarian_ingredient.lower().strip() in ingredient.lower():
-                return False
-    return True
+def is_vegetarian(ingredients):
+    # Vegetarian: No seafood or red meat
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], seafood + red_meat)
 
-def is_vegan(ingredients) -> bool:
-    """ 
-        No ingredients may contain meat or meat by-products, such as bones or gelatin, nor may they contain eggs, dairy, or honey.
-    """
-    non_vegan_ingredients = meats + egg_products + dairy_products
-    for ingredient in ingredients:
-        for non_vegan_ingredient in non_vegan_ingredients:
-            if non_vegan_ingredient.lower() in ingredient.lower():
-                return False
-    return True
+def is_vegan(ingredients):
+    # Vegan: No animal products (seafood, red meat, eggs, dairy)
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], seafood + red_meat + egg_products + dairy_products)
 
-def is_lacto_vegetarian(ingredients) -> bool:
-    """
-        No ingredients may contain meat or meat by-products, such as bones or gelatin, nor may they contain eggs.
-        Dairy is allowed.
-    """
-    non_lacto_vegetarian_ingredients = meats + egg_products
-    for ingredient in ingredients:
-        for non_lacto_vegetarian_ingredient in non_lacto_vegetarian_ingredients:
-            if non_lacto_vegetarian_ingredient.lower() in ingredient.lower():
-                return False
-    return True
+def is_pescetarian(ingredients):
+    # Pescetarian: No red meat or dairy, but seafood is allowed
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], red_meat + dairy_products)
 
-def is_ovo_vegetarian(ingredients) -> bool:
-    """
-        No ingredients may contain meat or meat by-products, such as bones or gelatin, nor may they contain dairy or honey.
-        Eggs are allowed.
-    """
-    non_ovo_vegetarian_ingredients = meats + dairy_products
-    for ingredient in ingredients:
-        for non_ovo_vegetarian_ingredient in non_ovo_vegetarian_ingredients:
-            if non_ovo_vegetarian_ingredient.lower() in ingredient.lower():
-                return False
-    return True
+def is_dairy_free(ingredients):
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], dairy_products)
 
-def is_keto(nutrition_info):
-    """
-    Determines if a recipe fits the Ketogenic (Keto) diet based on its macronutrient breakdown.
-    Fat: 55-80% of the total calories should come from fat.
-    Protein: 15-35% of the total calories should come from protein.
-    Carbohydrates: Less than 10% of the total calories should come from carbohydrates.
-    
-    This formula are based on Spoonacular diet analysis guidelines.
-    
-    Parameters:
-    - nutrition_info (dict): A dictionary containing the nutritional information with keys:
-        - 'fat': Fat in grams
-        - 'protein': Protein in grams
-        - 'carbs': Carbohydrates in grams
-        - 'calories': Total calories (optional, but can be calculated from macronutrients if not provided)
-    
-    Returns:
-    - bool: True if the recipe is keto-friendly, False otherwise
-    """
-    # Macronutrient caloric values
-    CALORIES_PER_GRAM_FAT = 9
-    CALORIES_PER_GRAM_PROTEIN = 4
-    CALORIES_PER_GRAM_CARBS = 4
+def is_seafood_free(ingredients):
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], seafood)
 
-    calories = int(nutrition_info['Total Calories'])
-    
-    fat_calories = CALORIES_PER_GRAM_FAT * int(nutrition_info["Total Fat"].split(" ")[0])
-    protein_calories = CALORIES_PER_GRAM_PROTEIN * int(nutrition_info["Protein"].split(" ")[0])
-    carb_calories = CALORIES_PER_GRAM_CARBS * int(nutrition_info["Carbohydrates"].split(" ")[0])
-    
-    fat_percent = fat_calories / calories * 100
-    protein_percent = protein_calories / calories * 100
-    carb_percent = carb_calories / calories * 100
-    
-    return (fat_percent > 54 and fat_percent < 81) and (protein_percent > 14 and protein_percent < 36) and carb_percent < 10
-
-
+def is_nut_free(ingredients):
+    return not contains_ingredient([ingredient.lower() for ingredient in ingredients], nuts)

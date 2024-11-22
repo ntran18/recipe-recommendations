@@ -14,7 +14,7 @@ Bee Larva
 Beef
 Beetle
 Beluga Caviar
-Bird Egg
+Bird
 Bison
 Brain
 Buffalo
@@ -37,20 +37,16 @@ Dog
 Donkey
 Duck
 Eel
-Egg
 Elk
 Emu
-Emu Egg
 Escamole
 Ant Larvae
 Escargot
 Fish
 Flounder
 Frog
-Frog Egg
 Gnu
 Goose
-Goose Egg
 Gopher
 Grasshopper
 Grouper
@@ -69,7 +65,7 @@ Lamb
 Leech
 Liver
 Lizard
-Llama Meat
+Llama
 Lobster
 Lobster Roe
 Merling
@@ -118,7 +114,6 @@ Spider
 Squid
 Squirrel
 Swan
-Swan Egg
 Swordfish
 Tarantula
 Tilapia
